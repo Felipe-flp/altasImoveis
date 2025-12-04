@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Imobiliária 3 Irmãos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      height: 100vh;
+      background: url('assets/images/banner-01.jpg') no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 15px;
+      width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+    button { width: 100%; padding: 10px; background: #f35525; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    button:hover { background: #333; }
+    h2 { margin-bottom: 10px; color: #1e1e1e; }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Bem-vindo</h2>
+    <p style="margin-bottom: 20px; color: #666;">Acesse sua conta</p>
+
+    <form id="formLogin">
+      <input type="email" id="email" placeholder="E-mail" required>
+      <input type="password" id="senha" placeholder="Senha" required>
+      <button type="submit">ENTRAR</button>
+    </form>
+    
+    <div style="margin-top: 15px;">
+      <a href="cadastro.html" style="font-size: 14px; color: #f35525; text-decoration: none;">Não tem conta? Cadastre-se aqui</a>
+    </div>
+  </div>
+
+  <script>
+    // --- PARTE 1: O CÓDIGO INICIAL (SETUP DO BANCO) ---
+    // Esta parte roda assim que a página abre.
+    // Ela verifica se o banco está vazio. Se estiver, cria o Admin e o Corretor.
+    
+    const usuariosNoBanco = localStorage.getItem('sistema_usuarios');
+
+    if (!usuariosNoBanco) {
+        // Se não tiver nada salvo, cria os usuários padrão agora!
+        const usuariosPadrao = [
+          {
+            nome: "Administrador Chefe",
+            email: "admin@3irmaos.com",
+            senha: "admin",
+            perfil: "admin" 
+          },
+          {
+            nome: "Carlos Corretor",
+            email: "carlos@3irmaos.com",
+            senha: "123",
+            perfil: "corretor",
+            creci: "12345-MG"
+          }
+        ];
+        
+        localStorage.setItem('sistema_usuarios', JSON.stringify(usuariosPadrao));
+        console.log("Banco de dados inicializado com Admin e Corretor.");
+    }
+
+    // --- PARTE 2: A LÓGICA DE LOGIN ---
+    
+    document.getElementById('formLogin').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const emailDigitado = document.getElementById('email').value;
+      const senhaDigitada = document.getElementById('senha').value;
+
+      // Busca os usuários atualizados (incluindo clientes novos que se cadastraram)
+      const usuarios = JSON.parse(localStorage.getItem('sistema_usuarios')) || [];
+      
+      // Procura quem está tentando entrar
+      const usuarioEncontrado = usuarios.find(u => u.email === emailDigitado && u.senha === senhaDigitada);
+
+      if (usuarioEncontrado) {
+        // Salva a sessão
+        localStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+
+        // REDIRECIONA BASEADO NO PERFIL
+        switch(usuarioEncontrado.perfil) {
+          case 'admin':
+            window.location.href = 'admin-dashboard.html';
+            break;
+          case 'corretor':
+            window.location.href = 'corretor-dashboard.html';
+            break;
+          default: // Clientes caem aqui
+            window.location.href = 'index.html';
+        }
+      } else {
+        alert('E-mail ou senha incorretos!');
+      }
+    });
+  </script>
+
+</body>
+</html>

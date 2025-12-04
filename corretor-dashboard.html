@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Painel de Gestão - Corretor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #F35525;
+            --primary-dark: #d43f1f;
+            --primary-light: #f97456;
+            --secondary: #2a2d3a;
+            --secondary-light: #3a3d4a;
+            --background: #fafafa;
+            --surface: #ffffff;
+            --text: #1e1e1e;
+            --text-secondary: #666;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gray-100: #f3f4f6;
+            --gray-300: #d1d5db;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #1a1d28 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            box-shadow: var(--shadow-md);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        /* MENU HAMBÚRGUER */
+        .menu-toggle {
+            display: none;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px 14px;
+            border-radius: 8px;
+            z-index: 1001;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            background: var(--primary-dark);
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .sidebar-menu-item:hover {
+            background: rgba(243, 85, 37, 0.12);
+            color: var(--primary-light);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-menu-item.active {
+            background: rgba(243, 85, 37, 0.15);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .sidebar-logout {
+            margin-top: auto;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* CONTENT AREA */
+        .content-area {
+            margin-left: 280px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--background);
+        }
+
+        .header-area {
+            background: var(--surface);
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .user-info p:first-child {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info p:last-child {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .container {
+            flex: 1;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-section h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .hero-section p {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 24px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* METRICS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .metric-value {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* MAIN LAYOUT */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* SECTIONS */
+        .section {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .section-content {
+            padding: 24px;
+        }
+
+        /* TABLE */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .table tbody tr {
+            transition: var(--transition);
+        }
+
+        .table tbody tr:hover {
+            background: var(--gray-100);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-agendada {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-realizada {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-cancelada {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-pendente {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-aprovada {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-rejeitada {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        /* PROPERTY CARDS */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .property-card {
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .property-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--gray-100);
+        }
+
+        .property-content {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .property-category {
+            display: inline-block;
+            background: rgba(243, 85, 37, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: fit-content;
+        }
+
+        .property-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .property-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .property-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .property-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .property-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .property-actions .btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 100px;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--surface);
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(243, 85, 37, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--surface);
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.3s ease;
+            z-index: 3000;
+            max-width: 400px;
+            border-left: 4px solid var(--success);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* TABLET */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .content-area {
+                margin-left: 240px;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .property-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            :root {
+                --header-height: 56px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                width: 280px;
+                height: 100vh;
+                position: fixed;
+                left: -280px;
+                top: 0;
+                padding: 24px;
+                flex-direction: column;
+                gap: 32px;
+                transition: left 0.3s ease;
+                z-index: 1000;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .sidebar-title {
+                font-size: 18px;
+            }
+
+            .sidebar-menu {
+                flex-direction: column;
+                gap: 8px;
+                flex: 1;
+                margin: 0;
+            }
+
+            .sidebar-menu-item {
+                padding: 12px 16px;
+                font-size: 14px;
+                flex: none;
+                justify-content: flex-start;
+                border: none;
+                border-left: 3px solid transparent;
+            }
+
+            .sidebar-menu-item:hover {
+                border-left-color: var(--primary);
+                background: rgba(243, 85, 37, 0.12);
+            }
+
+            .sidebar-menu-item.active {
+                background: rgba(243, 85, 37, 0.15);
+                border-left-color: var(--primary);
+            }
+
+            .sidebar-logout {
+                margin-top: auto;
+            }
+
+            .btn-logout {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .content-area {
+                margin-left: 0;
+            }
+
+            .header-area {
+                padding: 16px;
+                gap: 12px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .hero-section {
+                padding: 24px 16px;
+            }
+
+            .hero-section h1 {
+                font-size: 22px;
+            }
+
+            .hero-section p {
+                font-size: 14px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .metric-card {
+                padding: 16px;
+            }
+
+            .metric-value {
+                font-size: 28px;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 20px;
+                max-height: 90vh;
+            }
+
+            .table {
+                font-size: 12px;
+                min-width: 600px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 8px;
+            }
+
+            .table td:last-child {
+                white-space: normal;
+            }
+
+            .table td:last-child .btn {
+                display: inline-block;
+                margin: 2px;
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .section-header {
+                padding: 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            #aba-imoveis .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #aba-imoveis .section-header .btn {
+                width: 100%;
+            }
+
+            .section-content {
+                padding: 16px;
+            }
+
+            .property-actions {
+                flex-direction: column;
+            }
+
+            .property-actions .btn {
+                width: 100%;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-area {
+                flex-wrap: wrap;
+            }
+
+            .header-user {
+                gap: 8px;
+                order: 2;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .user-info p:first-child {
+                font-size: 12px;
+            }
+
+            .user-info p:last-child {
+                font-size: 11px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-value {
+                font-size: 24px;
+            }
+
+            .hero-section {
+                padding: 20px 12px;
+            }
+
+            .hero-section h1 {
+                font-size: 20px;
+            }
+
+            .hero-section p {
+                font-size: 13px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .hero-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                padding: 16px;
+                width: 98%;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-label {
+                font-size: 13px;
+            }
+
+            .form-input,
+            .form-textarea,
+            .form-select {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+            .notification {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                max-width: none;
+                padding: 12px 16px;
+            }
+
+            .table {
+                font-size: 11px;
+                min-width: 500px;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px 6px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .btn-approve,
+            .btn-reject,
+            .btn-edit,
+            .btn-delete {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .property-card {
+                margin-bottom: 0;
+            }
+
+            .property-image {
+                height: 180px;
+            }
+
+            .property-price {
+                font-size: 18px;
+            }
+
+            .property-title {
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            #aba-imoveis h2,
+            #aba-agenda h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* LANDSCAPE MOBILE */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .modal-content {
+                margin: 2% auto;
+                max-height: 95vh;
+            }
+
+            .hero-section {
+                padding: 16px;
+            }
+
+            .hero-section h1 {
+                font-size: 20px;
+            }
+        }
+
+        /* LARGE SCREENS */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .property-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+        }
+
+        /* TOUCH DEVICES */
+        @media (hover: none) and (pointer: coarse) {
+            .btn,
+            .sidebar-menu-item,
+            .property-card {
+                -webkit-tap-highlight-color: rgba(243, 85, 37, 0.2);
+            }
+
+            .btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .table th,
+            .table td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- MENU OVERLAY -->
+        <div class="menu-overlay" id="menuOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-title">📊 Gestor</div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active" onclick="navegarAbas('dashboard')">📈 Dashboard</div>
+                <div class="sidebar-menu-item" onclick="navegarAbas('imoveis')">🏠 Imóveis</div>
+                <div class="sidebar-menu-item" onclick="navegarAbas('agenda')">📅 Agenda</div>
+            </div>
+            <div class="sidebar-logout">
+                <button class="btn-logout" onclick="logout()">🚪 Sair</button>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-area">
+            <!-- HEADER -->
+            <div class="header-area">
+                <button class="menu-toggle" onclick="toggleSidebar()" id="menuToggle">☰</button>
+                <div class="header-title">Dashboard</div>
+                <div class="header-user">
+                    <div class="user-avatar" id="usuarioAvatar">CV</div>
+                    <div class="user-info">
+                        <p id="usuarioNome">Corretor Visitante</p>
+                        <p>Gestor de Imóveis</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTAINER -->
+            <div class="container">
+                <!-- ABA DASHBOARD -->
+                <div id="aba-dashboard" class="aba-content">
+                    <!-- HERO -->
+                    <div class="hero-section">
+                        <h1>Bem-vindo ao seu Painel</h1>
+                        <p>Gerencie suas visitas, imóveis e agenda de forma centralizada</p>
+                        <div class="hero-actions">
+                           
+                        </div>
+                    </div>
+
+                    <!-- MÉTRICAS -->
+                    <div>
+                        <h2 style="margin-bottom: 16px; font-size: 18px; font-weight: 700;">Resumo</h2>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value" id="metricaPendentes">0</div>
+                                <div class="metric-label">Visitas Agendadas</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="metricaRealizadas">0</div>
+                                <div class="metric-label">Visitas Realizadas</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="metricaTotal">0</div>
+                                <div class="metric-label">Total de Visitas</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" id="metricaImoveis">0</div>
+                                <div class="metric-label">Imóveis Cadastrados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LAYOUT PRINCIPAL -->
+                    <div class="main-layout">
+                        <!-- AGENDA -->
+                        <div class="section">
+                            <div class="section-header">
+                                <h3 class="section-title">📅 Próximas Visitas</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="table-wrapper">
+                                    <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Hora</th>
+                                            <th>Cliente</th>
+                                            <th>Imóvel</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="agendaTable">
+                                        <tr>
+                                            <td colspan="6" class="empty-state">
+                                                <div style="font-size: 12px;">Nenhuma visita agendada</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- HISTÓRICO -->
+                        <div class="section">
+                            <div class="section-header">
+                                <h3 class="section-title">📊 Histórico</h3>
+                            </div>
+                            <div class="section-content">
+                                <div class="table-wrapper">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Cliente</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historicoTable">
+                                            <tr>
+                                                <td colspan="2" class="empty-state">
+                                                    <div style="font-size: 12px;">Nenhum histórico</div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA IMÓVEIS -->
+                <div id="aba-imoveis" class="aba-content" style="display: none;">
+                    <div class="section-header" style="margin-bottom: 24px; border: none; padding: 0;">
+                        <h2 style="font-size: 24px; font-weight: 700;">Meus Imóveis</h2>
+                        <button class="btn btn-primary" onclick="abrirModalAdicionar()">+ Adicionar Imóvel</button>
+                    </div>
+                    <div class="property-grid" id="imoveisContainer"></div>
+                </div>
+
+                <!-- ABA AGENDA -->
+                <div id="aba-agenda" class="aba-content" style="display: none;">
+                    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 24px;">Minhas Visitas</h2>
+                    <div class="section">
+                        <div class="section-content">
+                            <div class="table-wrapper">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Hora</th>
+                                            <th>Cliente</th>
+                                            <th>Imóvel</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="agendaFullTable">
+                                        <tr>
+                                            <td colspan="6" class="empty-state">
+                                                <div style="font-size: 12px;">Nenhuma visita registrada</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL IMÓVEL -->
+    <div id="modalImovel" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Adicionar Imóvel</h2>
+                <button class="modal-close" onclick="fecharModal()">×</button>
+            </div>
+            <form id="formImovel">
+                <div class="form-group">
+                    <label class="form-label">URL da Imagem</label>
+                    <input type="text" id="imovelImagem" class="form-input" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoria</label>
+                    <select id="imovelCategoria" class="form-select" required>
+                        
+                        <option value="Apartamento">Apartamento</option>
+                        <option value="Casa">Casa</option>
+                        
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preço</label>
+                    <input type="text" id="imovelPreco" class="form-input" placeholder="€ 250.000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Título</label>
+                    <input type="text" id="imovelTitulo" class="form-input" placeholder="Ex: Apartamento T3 moderno" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quartos</label>
+                    <input type="number" id="imovelQuartos" class="form-input" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Banheiros</label>
+                    <input type="number" id="imovelBanheiros" class="form-input" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Área (m²)</label>
+                    <input type="text" id="imovelArea" class="form-input" placeholder="Ex: 120 m²" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Andar</label>
+                    <input type="text" id="imovelAndar" class="form-input" placeholder="Ex: 3º andar" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vagas de Garagem</label>
+                    <input type="text" id="imovelVagas" class="form-input" placeholder="Ex: 2 vagas" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo (opcional)</label>
+                    <select id="imovelTipo" class="form-select">
+                        <option value="">Selecione o tipo (opcional)</option>
+                        <option value="adv">Avançado</option>
+                        <option value="str">Rua</option>
+                        <option value="rac">Corrida</option>
+                        <option value="adv rac">Avançado/Corrida</option>
+                        <option value="rac str">Corrida/Rua</option>
+                        <option value="rac adv">Corrida/Avançado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição do Imóvel (opcional)</label>
+                    <textarea id="imovelDescricao" class="form-textarea" placeholder="Resumo do imóvel que aparecerá na página de detalhes"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">✓ Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">✕ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function navegarAbas(aba) {
+            // Esconder todas as abas
+            document.querySelectorAll('.aba-content').forEach(el => el.style.display = 'none');
+            
+            // Mostrar aba selecionada
+            document.getElementById('aba-' + aba).style.display = 'block';
+            
+            // Atualizar menu
+            document.querySelectorAll('.sidebar-menu-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Atualizar header
+            const titles = {
+                'dashboard': 'Dashboard',
+                'imoveis': 'Meus Imóveis',
+                'agenda': 'Minhas Visitas'
+            };
+            document.querySelector('.header-title').textContent = titles[aba];
+            
+            // Renderizar agenda completa ao navegar para aba
+            if (aba === 'agenda') {
+                let visitas = JSON.parse(localStorage.getItem('visitas')) || [];
+                renderizarAgendaCompleta(visitas);
+            }
+        }
+
+        function mostrarNotificacao(mensagem, tipo = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification' + (tipo === 'error' ? ' error' : '');
+            notification.textContent = mensagem;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function gerarIniciais(nome) {
+            if (!nome) return 'CV';
+            const partes = nome.trim().split(' ');
+            if (partes.length >= 2) {
+                return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+            }
+            return nome.substring(0, 2).toUpperCase();
+        }
+
+        function inicializar() {
+            let usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            
+            // Verifica se não está logado e redireciona para login
+            if (!usuarioLogado) {
+                alert('Você precisa fazer login para acessar esta página.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Verifica se o perfil é corretor
+            if (usuarioLogado.perfil !== 'corretor') {
+                alert('Acesso negado. Esta página é apenas para corretores.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Gera iniciais se não existirem
+            if (!usuarioLogado.iniciais) {
+                usuarioLogado.iniciais = gerarIniciais(usuarioLogado.nome || usuarioLogado.nome);
+            }
+
+            document.getElementById('usuarioNome').textContent = usuarioLogado.nome || 'Corretor';
+            document.getElementById('usuarioAvatar').textContent = usuarioLogado.iniciais || 'CV';
+
+            let visitas = JSON.parse(localStorage.getItem('visitas'));
+            if (!visitas || visitas.length === 0) {
+                visitas = gerarMockData();
+                localStorage.setItem('visitas', JSON.stringify(visitas));
+            }
+
+            renderizarDashboard(visitas);
+            renderizarImoveis();
+            atualizarMetricaImoveis();
+            
+            // Mostrar dashboard por padrão
+            navegarAbas('dashboard');
+        }
+
+        function gerarMockData() {
+            const hoje = new Date();
+            return [
+                {
+                    id: 1,
+                    data: new Date(hoje.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    hora: '10:00',
+                    cliente: 'João Silva',
+                    imovel: 'Apartamento T3 - Rua da Liberdade, 123',
+                    status: 'Agendada'
+                },
+                {
+                    id: 2,
+                    data: new Date(hoje.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    hora: '14:30',
+                    cliente: 'Maria Santos',
+                    imovel: 'Casa T4 - Av. Principal, 456',
+                    status: 'Agendada'
+                },
+                {
+                    id: 3,
+                    data: new Date(hoje.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    hora: '11:00',
+                    cliente: 'Pedro Oliveira',
+                    imovel: 'Apartamento T2 - Rua da Paz, 789',
+                    status: 'Realizada'
+                }
+            ];
+        }
+
+        function renderizarDashboard(visitas) {
+            const pendentes = visitas.filter(v => !v.status || v.status === 'Agendada' || v.status === 'Pendente');
+            const realizadas = visitas.filter(v => v.status === 'Realizada' || v.status === 'Aprovada');
+            const total = visitas.length;
+
+            document.getElementById('metricaPendentes').textContent = pendentes.length;
+            document.getElementById('metricaRealizadas').textContent = realizadas.length;
+            document.getElementById('metricaTotal').textContent = total;
+
+            renderizarAgenda(pendentes);
+            renderizarHistorico(realizadas);
+        }
+
+        function renderizarAgenda(visitas) {
+            const tbody = document.getElementById('agendaTable');
+            
+            if (visitas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999; padding: 24px;">Nenhuma visita agendada</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = visitas.slice(0, 5).map(v => {
+                const statusClass = v.status === 'Aprovada' ? 'status-aprovada' : 
+                                   v.status === 'Rejeitada' ? 'status-rejeitada' : 
+                                   v.status === 'Pendente' ? 'status-pendente' : 'status-agendada';
+                const statusText = v.status || 'Agendada';
+                const podeAprovar = !v.status || v.status === 'Agendada' || v.status === 'Pendente';
+                
+                return `
+                <tr>
+                    <td>${v.data || '—'}</td>
+                    <td>${v.hora || '—'}</td>
+                    <td>${v.cliente || '—'}</td>
+                    <td>${v.imovel || '—'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        ${podeAprovar ? `
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <button class="btn btn-approve" onclick="aprovarVisita(${v.id})" title="Aprovar">✓ Aprovar</button>
+                                <button class="btn btn-reject" onclick="rejeitarVisita(${v.id})" title="Rejeitar">✕ Rejeitar</button>
+                            </div>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        function renderizarAgendaCompleta(visitas) {
+            const tbody = document.getElementById('agendaFullTable');
+            
+            if (visitas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999; padding: 24px;">Nenhuma visita registrada</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = visitas.map(v => {
+                const statusClass = v.status === 'Aprovada' ? 'status-aprovada' : 
+                                   v.status === 'Rejeitada' ? 'status-rejeitada' : 
+                                   v.status === 'Pendente' ? 'status-pendente' : 
+                                   v.status === 'Realizada' ? 'status-realizada' : 
+                                   v.status === 'Cancelada' ? 'status-cancelada' : 'status-agendada';
+                const statusText = v.status || 'Agendada';
+                const podeAprovar = !v.status || v.status === 'Agendada' || v.status === 'Pendente';
+                
+                return `
+                <tr>
+                    <td>${v.data || '—'}</td>
+                    <td>${v.hora || '—'}</td>
+                    <td>${v.cliente || '—'}</td>
+                    <td>${v.imovel || '—'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        ${podeAprovar ? `
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <button class="btn btn-approve" onclick="aprovarVisita(${v.id})" title="Aprovar">✓ Aprovar</button>
+                                <button class="btn btn-reject" onclick="rejeitarVisita(${v.id})" title="Rejeitar">✕ Rejeitar</button>
+                            </div>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        function renderizarHistorico(visitas) {
+            const tbody = document.getElementById('historicoTable');
+            
+            if (visitas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: #999; padding: 24px;">Nenhum histórico</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = visitas.slice(0, 5).map(v => {
+                const statusClass = v.status === 'Aprovada' ? 'status-aprovada' : 
+                                   v.status === 'Rejeitada' ? 'status-rejeitada' : 
+                                   v.status === 'Realizada' ? 'status-realizada' : 
+                                   v.status === 'Cancelada' ? 'status-cancelada' : 'status-agendada';
+                return `
+                <tr>
+                    <td>${v.cliente || '—'}</td>
+                    <td><span class="status-badge ${statusClass}">${v.status || 'Agendada'}</span></td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        function aprovarVisita(id) {
+            let visitas = JSON.parse(localStorage.getItem('visitas')) || [];
+            const index = visitas.findIndex(v => v.id === id);
+            
+            if (index !== -1) {
+                visitas[index].status = 'Aprovada';
+                localStorage.setItem('visitas', JSON.stringify(visitas));
+                mostrarNotificacao('Visita aprovada com sucesso!', 'success');
+                
+                // Atualizar visualizações
+                renderizarDashboard(visitas);
+                if (document.getElementById('aba-agenda').style.display !== 'none') {
+                    renderizarAgendaCompleta(visitas);
+                }
+            }
+        }
+
+        function rejeitarVisita(id) {
+            if (!confirm('Tem certeza que deseja rejeitar esta visita?')) {
+                return;
+            }
+            
+            let visitas = JSON.parse(localStorage.getItem('visitas')) || [];
+            const index = visitas.findIndex(v => v.id === id);
+            
+            if (index !== -1) {
+                visitas[index].status = 'Rejeitada';
+                localStorage.setItem('visitas', JSON.stringify(visitas));
+                mostrarNotificacao('Visita rejeitada.', 'error');
+                
+                // Atualizar visualizações
+                renderizarDashboard(visitas);
+                if (document.getElementById('aba-agenda').style.display !== 'none') {
+                    renderizarAgendaCompleta(visitas);
+                }
+            }
+        }
+
+        function renderizarImoveis() {
+            let properties = JSON.parse(localStorage.getItem('properties')) || [];
+            const container = document.getElementById('imoveisContainer');
+
+            if (properties.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🏠</div>
+                        <p>Nenhum imóvel cadastrado ainda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = properties.map(prop => `
+                <div class="property-card">
+                    <img src="${prop.image || 'https://via.placeholder.com/300x200?text=Imagem+não+encontrada'}" alt="${prop.title}" class="property-image" onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+não+encontrada'">
+                    <div class="property-content">
+                        <div class="property-category">${prop.category || 'Sem categoria'}</div>
+                        <div class="property-price">${prop.price || '—'}</div>
+                        <div class="property-title">${prop.title || 'Sem título'}</div>
+                        ${prop.description ? `<p style="font-size:12px; color:#777; margin-top:4px;">${prop.description.substring(0, 80)}${prop.description.length > 80 ? '...' : ''}</p>` : ''}
+                        <div class="property-details">
+                            <div class="property-detail"><span>🛏️</span><span>${prop.bedrooms || 0} Quartos</span></div>
+                            <div class="property-detail"><span>🚿</span><span>${prop.bathrooms || 0} Banheiros</span></div>
+                            <div class="property-detail"><span>📐</span><span>${prop.area || '—'}</span></div>
+                            <div class="property-detail"><span>🏢</span><span>${prop.floor || '—'}</span></div>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-edit" onclick="editarImovel(${prop.id})">✏️ Editar</button>
+                            <button class="btn btn-delete" onclick="removerImovel(${prop.id})">🗑️ Remover</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function atualizarMetricaImoveis() {
+            let properties = JSON.parse(localStorage.getItem('properties')) || [];
+            document.getElementById('metricaImoveis').textContent = properties.length;
+        }
+
+        function abrirModalAdicionar() {
+            document.getElementById('modalTitle').textContent = 'Adicionar Imóvel';
+            document.getElementById('formImovel').reset();
+            document.getElementById('modalImovel').style.display = 'block';
+            document.getElementById('formImovel').dataset.editId = '';
+        }
+
+        function editarImovel(id) {
+            let properties = JSON.parse(localStorage.getItem('properties')) || [];
+            const prop = properties.find(p => p.id === id);
+
+            if (prop) {
+                document.getElementById('modalTitle').textContent = 'Editar Imóvel';
+                document.getElementById('imovelImagem').value = prop.image || '';
+                document.getElementById('imovelCategoria').value = prop.category || '';
+                document.getElementById('imovelPreco').value = prop.price || '';
+                document.getElementById('imovelTitulo').value = prop.title || '';
+                document.getElementById('imovelQuartos').value = prop.bedrooms || 0;
+                document.getElementById('imovelBanheiros').value = prop.bathrooms || 0;
+                document.getElementById('imovelArea').value = prop.area || '';
+                document.getElementById('imovelAndar').value = prop.floor || '';
+                document.getElementById('imovelVagas').value = prop.parking || '';
+                document.getElementById('imovelTipo').value = prop.type || '';
+                document.getElementById('imovelDescricao').value = prop.description || '';
+                document.getElementById('modalImovel').style.display = 'block';
+                document.getElementById('formImovel').dataset.editId = id;
+            }
+        }
+
+        function removerImovel(id) {
+            if (confirm('Tem certeza que deseja remover este imóvel?')) {
+                let properties = JSON.parse(localStorage.getItem('properties')) || [];
+                properties = properties.filter(p => p.id !== id);
+                localStorage.setItem('properties', JSON.stringify(properties));
+                renderizarImoveis();
+                atualizarMetricaImoveis();
+                mostrarNotificacao('Imóvel removido com sucesso!', 'success');
+            }
+        }
+
+        function fecharModal() {
+            document.getElementById('modalImovel').style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('usuarioLogado');
+            window.location.reload();
+        }
+
+        document.getElementById('formImovel').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                image: document.getElementById('imovelImagem').value,
+                category: document.getElementById('imovelCategoria').value,
+                price: document.getElementById('imovelPreco').value,
+                title: document.getElementById('imovelTitulo').value,
+                bedrooms: parseInt(document.getElementById('imovelQuartos').value) || 0,
+                bathrooms: parseInt(document.getElementById('imovelBanheiros').value) || 0,
+                area: document.getElementById('imovelArea').value,
+                floor: document.getElementById('imovelAndar').value,
+                parking: document.getElementById('imovelVagas').value,
+                type: document.getElementById('imovelTipo').value || '',
+                description: document.getElementById('imovelDescricao').value || ''
+            };
+
+            let properties = JSON.parse(localStorage.getItem('properties')) || [];
+            const editId = parseInt(this.dataset.editId);
+
+            if (editId) {
+                const index = properties.findIndex(p => p.id === editId);
+                if (index !== -1) {
+                    properties[index] = { ...properties[index], ...formData };
+                    mostrarNotificacao('Imóvel atualizado com sucesso!', 'success');
+                }
+            } else {
+                const novoImovel = {
+                    id: properties.length > 0 ? Math.max(...properties.map(p => p.id), 0) + 1 : 1,
+                    ...formData
+                };
+                properties.push(novoImovel);
+                mostrarNotificacao('Imóvel adicionado com sucesso!', 'success');
+            }
+
+            localStorage.setItem('properties', JSON.stringify(properties));
+            renderizarImoveis();
+            atualizarMetricaImoveis();
+            fecharModal();
+        });
+
+        document.getElementById('modalImovel').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModal();
+            }
+        });
+
+        // Função para toggle do menu mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('menuOverlay');
+            const isActive = sidebar.classList.contains('active');
+            
+            if (isActive) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            }
+        }
+
+        // Fechar sidebar ao clicar em um item do menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.sidebar-menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            toggleSidebar();
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Fechar sidebar ao redimensionar para desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('menuOverlay');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Inicializar ao carregar
+        window.addEventListener('load', inicializar);
+    </script>
+</body>
+</html>

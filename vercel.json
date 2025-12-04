@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "name": "atlasimoveis",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+

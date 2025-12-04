@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro | Imobiliária 3 Irmãos</title>
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/templatemo-villa-agency.css">
+  <style>
+    body {
+      background: url('assets/images/banner-01.jpg') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cadastro-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .cadastro-card h2 { text-align: center; color: #1e1e1e; margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .btn-cadastrar {
+      width: 100%;
+      background-color: #f35525;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .btn-cadastrar:hover { background-color: #1e1e1e; }
+  </style>
+</head>
+<body>
+
+  <div class="cadastro-card">
+    <h2>Criar Conta</h2>
+    <form id="formCadastro">
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="nome" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>CPF</label>
+        <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00" required>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="email" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="senha" class="form-control" required>
+      </div>
+      
+      <button type="submit" class="btn-cadastrar">CADASTRAR</button>
+      <div class="text-center mt-3">
+        <a href="login.html" style="color: #666;">Já tem conta? Faça Login</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('formCadastro').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const nome = document.getElementById('nome').value;
+      const cpf = document.getElementById('cpf').value;
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      // Lê a lista 'sistema_usuarios', a mesma do Login
+      let usuarios = JSON.parse(localStorage.getItem('sistema_usuarios')) || [];
+      
+      // Verifica se o email já existe
+      if(usuarios.find(u => u.email === email)) {
+        alert('Este e-mail já está cadastrado!');
+        return;
+      }
+
+      // Cria o novo usuário CLIENTE
+      const novoUsuario = { 
+        nome: nome, 
+        cpf: cpf, 
+        email: email, 
+        senha: senha, 
+        perfil: "cliente", // Define o perfil
+        dataCadastro: new Date().toLocaleDateString() 
+      };
+
+      usuarios.push(novoUsuario);
+      
+      // Salva na lista correta
+      localStorage.setItem('sistema_usuarios', JSON.stringify(usuarios));
+
+      // Também registra o cliente na lista de "customers" usada pelo admin-dashboard
+      let customers = JSON.parse(localStorage.getItem('customers')) || [];
+      // Evita duplicar o mesmo email
+      if (!customers.find(c => c.email === email)) {
+        customers.push({
+          email: email,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('customers', JSON.stringify(customers));
+      }
+      
+      // Salva o usuário logado para redirecionamento automático
+      localStorage.setItem('usuarioLogado', JSON.stringify(novoUsuario));
+      
+      alert('Cadastro realizado com sucesso! Redirecionando...');
+      
+      // Redireciona baseado no perfil (mesma lógica do login)
+      // Como é cliente, vai para index.html
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

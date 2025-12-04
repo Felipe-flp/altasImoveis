@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Villa Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      /* Mudança: Fundo agora é o Cinza Escuro da paleta */
+      background: #2C2C2C; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .admin-login-container {
+      /* Mudança: Fundo do card agora é o Cinza Claro/Off-white da paleta */
+      background: #FAFAFA;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); /* Sombra levemente mais escura para contraste */
+      width: 400px;
+    }
+
+    .admin-login-container h1 {
+      /* Mudança: Texto principal na cor escura da paleta */
+      color: #2C2C2C;
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .admin-login-container p {
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      /* Mudança: Labels na cor escura da paleta */
+      color: #2C2C2C;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+      background-color: #fff;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      /* Mudança: Cor da borda ao focar agora é o Amarelo/Laranja */
+      border-color: #FFB800;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      /* Mudança: Botão agora é o Amarelo/Laranja sólido */
+      background: #FFB800;
+      /* Mudança: Texto do botão escuro para melhor contraste com o amarelo */
+      color: #2C2C2C; 
+      border: none;
+      border-radius: 5px;
+      font-weight: 800; /* Aumentei levemente o peso para destacar no amarelo */
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      /* Opcional: escurecer um pouco no hover ou manter a cor */
+      opacity: 0.9;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-login-container">
+    <h1>Admin Panel</h1>
+    <p>Acesse o painel de administração</p>
+
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label for="adminEmail">Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@villa.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword">Senha</label>
+        <input type="password" id="adminPassword" placeholder="Digite sua senha" required>
+      </div>
+
+      <button type="submit" class="login-btn">Entrar</button>
+      <div class="error-message" id="errorMessage"></div>
+    </form>
+  </div>
+
+  <script>
+    // Admin credentials (em produção, isso seria verificado no backend)
+    const ADMIN_EMAIL = 'admin@villa.com';
+    const ADMIN_PASSWORD = 'admin123';
+
+    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminEmail', email);
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        errorMessage.textContent = 'Email ou senha incorretos';
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

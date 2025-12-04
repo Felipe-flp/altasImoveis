@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Visita | Imobiliária 3 Irmãos</title>
+  
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/fontawesome.css">
+  <link rel="stylesheet" href="assets/css/templatemo-villa-agency.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- DESIGN PREMIUM (Igual ao anterior) --- */
+    :root {
+      --primary: #f35525;
+      --dark: #1e1e1e;
+      --light-bg: #f7f7f7;
+    }
+
+    body {
+      background-color: #fafafa;
+      background-image: radial-gradient(at 0% 0%, rgba(243, 85, 37, 0.05) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(30, 30, 30, 0.05) 0px, transparent 50%);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Card do Imóvel */
+    .imovel-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .imovel-card:hover { transform: translateY(-5px); }
+
+    .image-wrapper { position: relative; height: 300px; width: 100%; background: #eee; }
+    .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    .price-badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 5px 15px rgba(243, 85, 37, 0.4);
+    }
+
+    .card-content { padding: 30px; text-align: center; }
+    .card-content h4 { font-size: 1.4rem; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+
+    /* Formulário */
+    .form-visita {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+
+    .form-visita h2 { font-size: 1.8rem; margin-bottom: 30px; color: var(--dark); }
+
+    .input-group-modern { margin-bottom: 20px; position: relative; }
+    .input-group-modern label {
+      font-size: 0.85rem; font-weight: 600; color: #666; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .input-group-modern input {
+      width: 100%; padding: 15px 20px; border: 2px solid #eee; border-radius: 12px; background: #fdfdfd; font-size: 1rem; transition: all 0.3s;
+    }
+    .input-group-modern input:focus {
+      border-color: var(--primary); background: white; outline: none; box-shadow: 0 0 0 4px rgba(243, 85, 37, 0.1);
+    }
+
+    .btn-confirmar {
+      width: 100%; background: var(--dark); color: white; padding: 18px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .btn-confirmar:hover { background: var(--primary); transform: scale(1.02); box-shadow: 0 10px 20px rgba(243, 85, 37, 0.3); }
+
+    .page-heading { padding: 80px 0; background: white; }
+  </style>
+</head>
+<body>
+
+  <header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <!-- ***** Logo Start ***** -->
+                    <a href="index.html" class="logo">
+                      <img src="assets/images/atlas-logo.svg" alt="Atlas Imóveis logo">
+                    </a>
+                    <!-- ***** Logo End ***** -->
+                    <!-- ***** Menu Start ***** -->
+                    <ul class="nav">
+                      <li><a href="index.html" class="active">Início</a></li>
+                      <li><a href="properties-updated.html">Propriedades</a></li>
+                      <li><a href="property-details.html">Detalhes</a></li>
+                      <li><a href="contact.html">Contato</a></li>
+                      <li><a href="login.html"><i class="fa fa-calendar"></i> Cadastrar-se</a></li>
+                  </ul>   
+                    <a class='menu-trigger'>
+                        <span>Menu</span>
+                    </a>
+                    <!-- ***** Menu End ***** -->
+                </nav>
+            </div>
+        </div>
+    </div>
+  </header>
+
+  <div class="page-heading header-text">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <span class="breadcrumb"><a href="#">Imóveis</a> / Agendamento</span>
+          <h3>Agendar Sua Visita</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section contact-content">
+    <div class="container">
+      <div class="row align-items-center">
+
+        <div class="col-lg-5 mb-4">
+          <div class="imovel-card h-100">
+            <div class="image-wrapper">
+              <img id="img-imovel" src="assets/images/banner-01.jpg" alt="Imagem do Imóvel">
+              <span class="price-badge" id="badge-preco" style="display:none;">R$ 0,00</span>
+            </div>
+            <div class="card-content">
+              <p>RESUMO</p>
+              <h4 id="display-titulo">Visita Geral</h4>
+              <hr style="width: 50px; margin: 20px auto; border-color: var(--primary);">
+              <div style="display:flex; justify-content:center; gap:15px; color:#666;">
+                 <span><i class="fa fa-check-circle"></i> Agendamento</span>
+                 <span><i class="fa fa-user"></i> Corretor Especialista</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="form-visita h-100">
+            <h2>Dados da Visita</h2>
+            <form id="formAgendamento">
+              <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="input-group-modern">
+                      <label>Imóvel de Interesse (Opcional)</label>
+                      <input type="text" id="input-imovel-nome" placeholder="Digite o nome ou código do imóvel..." required>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <div class="input-group-modern">
+                    <label>Data Preferida</label>
+                    <input type="date" id="data" required>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="input-group-modern">
+                    <label>Horário</label>
+                    <input type="time" id="hora" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="input-group-modern">
+                    <label>Seu WhatsApp</label>
+                    <input type="text" id="telefone" placeholder="(DD) 99999-9999" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <button type="submit" class="btn-confirmar">
+                    <i class="fa fa-calendar-check-o"></i> Confirmar Agendamento
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="col-lg-12">
+        <p>Copyright © 2025 Imobiliária 3 Irmãos.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 1. CARREGAR DADOS
+    // Tenta pegar o imóvel selecionado (se houver)
+    const imovelSelecionado = JSON.parse(localStorage.getItem('imovel_visita'));
+    const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+
+    // Verifica Login (Segurança)
+    if(!usuario) {
+        alert("Você precisa fazer login para acessar esta página.");
+        window.location.href = "login.html";
+    }
+
+    // 2. CONFIGURAR A TELA
+    const inputNomeImovel = document.getElementById('input-imovel-nome');
+    const displayTitulo = document.getElementById('display-titulo');
+    const imgImovel = document.getElementById('img-imovel');
+    const badgePreco = document.getElementById('badge-preco');
+
+    if (imovelSelecionado) {
+        // MODO: Imóvel Específico
+        inputNomeImovel.value = imovelSelecionado.titulo; // Preenche o input
+        //inputNomeImovel.readOnly = true; // Opcional: Bloquear edição se quiser
+
+        displayTitulo.innerText = imovelSelecionado.titulo;
+        
+        if(imovelSelecionado.imagem) {
+            imgImovel.src = imovelSelecionado.imagem;
+        }
+        
+        if(imovelSelecionado.preco) {
+            badgePreco.innerText = imovelSelecionado.preco;
+            badgePreco.style.display = 'block';
+        }
+
+        // Limpa a seleção após carregar (para se ele voltar, estar limpo)
+        // localStorage.removeItem('imovel_visita'); 
+        // Comentei a linha acima para caso ele dê F5, não perder os dados.
+    } else {
+        // MODO: Visita Geral (Sem imóvel prévio)
+        displayTitulo.innerText = "Consultoria Geral";
+        badgePreco.style.display = 'none';
+        // O input fica vazio para ele digitar
+    }
+
+    // 3. SALVAR AGENDAMENTO
+    document.getElementById('formAgendamento').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Agora pegamos o nome do imóvel direto do INPUT, pois o usuário pode ter digitado
+        const imovelFinal = inputNomeImovel.value || "Interesse Geral";
+
+        const novaVisita = {
+            id: Date.now(),
+            cliente: usuario.nome,
+            email_cliente: usuario.email,
+            imovel: imovelFinal,
+            data: document.getElementById('data').value,
+            hora: document.getElementById('hora').value,
+            telefone: document.getElementById('telefone').value,
+            status: "Agendada"
+        };
+
+        // Salva no LocalStorage
+        let visitas = JSON.parse(localStorage.getItem('visitas')) || [];
+        visitas.push(novaVisita);
+        localStorage.setItem('visitas', JSON.stringify(visitas));
+
+        // Limpa a seleção temporária
+        localStorage.removeItem('imovel_visita');
+
+        alert("Sucesso! Sua visita foi agendada.");
+        window.location.href = "index.html";
+    });
+  </script>
+
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="assets/js/custom.js"></script>
+</body>
+</html>

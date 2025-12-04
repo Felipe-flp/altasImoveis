@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Villa Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/fontawesome.css">
+  <link rel="stylesheet" href="assets/css/templatemo-villa-agency.css">
+  <style>
+    :root {
+      --accent: #ff6b35;
+      --accent-dark: #e64a19;
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --card-bg: #ffffff;
+      --text: #11131a;
+      --muted: #5f6572;
+      --border: #eceff4;
+      --shadow: 0 25px 60px rgba(15, 22, 36, 0.12);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #f4f6fb 0%, #fdf0e6 60%, #f8f9ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .admin-panel {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      min-height: 100vh;
+      padding: 60px 48px;
+    }
+
+    .admin-sidebar {
+      background: rgba(19, 23, 35, 0.95);
+      border-radius: 28px;
+      padding: 32px 24px;
+      position: sticky;
+      top: 30px;
+      align-self: start;
+      height: fit-content;
+      box-shadow: 0 25px 60px rgba(12, 18, 31, 0.35);
+    }
+
+    .sidebar-title {
+      color: #fff;
+      font-size: 1.15rem;
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .admin-sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #cfd4df;
+      padding: 14px 16px;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .admin-sidebar a i {
+      width: 20px;
+      text-align: center;
+    }
+
+    .admin-sidebar a:hover,
+    .admin-sidebar a.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-left: 4px solid var(--accent);
+      padding-left: 12px;
+    }
+
+    .logout-btn {
+      display: block;
+      width: calc(100% - 48px);
+      margin: 30px auto 0;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      padding: 12px 0;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 12px 25px rgba(255, 99, 71, 0.3);
+    }
+
+    .admin-content {
+      background: var(--panel-bg);
+      border-radius: 32px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      width: 100%;
+    }
+
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .message {
+      margin: 0 0 20px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .message.success {
+      background: #e4f7ed;
+      color: #1b6b28;
+      display: block;
+    }
+
+    .message.error {
+      background: #ffe6e9;
+      color: #921c29;
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(16, 24, 38, 0.08);
+    }
+
+    .stat-card .value {
+      font-size: 2rem;
+      color: var(--text);
+      margin: 8px 0 6px;
+    }
+
+    .stat-card .label,
+    .stat-card .muted-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 999px;
+      padding: 10px 26px;
+      font-size: 0.95rem;
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(255, 99, 71, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 35px rgba(255, 99, 71, 0.35);
+    }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid rgba(255, 99, 71, 0.6);
+      outline-offset: 3px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 99, 71, 0.35);
+      color: var(--accent-dark);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .panel-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .panel-section.active {
+      display: block;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 6px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .form-section {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(21, 30, 40, 0.08);
+      border: 1px solid #f0f0f5;
+      margin-bottom: 26px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #fafbff;
+      font-size: 0.95rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 111, 73, 0.2);
+      background: #fff;
+    }
+
+    .property-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 35px rgba(15, 24, 40, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .property-card-main {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .property-card img {
+      width: 140px;
+      height: 110px;
+      border-radius: 16px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #f0f0f5;
+    }
+
+    .property-info h5 {
+      font-size: 1.15rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .property-info .price {
+      color: var(--accent-dark);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .property-category {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 111, 73, 0.15);
+      color: var(--accent-dark);
+      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .property-info p {
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .property-card-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .property-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .btn-delete {
+      background: #d32f2f;
+      color: #fff;
+      padding: 9px 24px;
+      border: none;
+      border-radius: 12px;
+    }
+
+    .btn-delete:hover {
+      background: #b71c1c;
+    }
+
+    .btn-edit {
+      background: #2196f3;
+      color: #fff;
+      padding: 9px 24px;
+      border: none;
+      border-radius: 12px;
+      margin-right: 8px;
+    }
+
+    .btn-edit:hover {
+      background: #1976d2;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .contracts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 12px;
+    }
+
+    .contracts-list {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .contract-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 15px 30px rgba(12, 16, 26, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contract-card strong {
+      font-size: 1rem;
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .contract-card .contract-number {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .contract-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 1rem;
+      text-align: center;
+      padding: 30px 10px;
+      background: #fff8f3;
+      border-radius: 16px;
+      border: 1px dashed rgba(255, 111, 73, 0.4);
+    }
+
+    .customer-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 320px;
+    }
+
+    .customer-table thead {
+      background: #171c2b;
+      color: #fff;
+    }
+
+    .customer-table th,
+    .customer-table td {
+      padding: 16px;
+      text-align: left;
+    }
+
+    .customer-table tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .customer-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .customer-table tbody tr:hover {
+      background: #fdf2ec;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 18px;
+      border: 1px solid #f0f0f5;
+      background: #fff;
+      box-shadow: 0 20px 45px rgba(12, 16, 24, 0.08);
+    }
+
+    @media (max-width: 1040px) {
+      .admin-panel {
+        grid-template-columns: 260px 1fr;
+        padding: 40px 32px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-panel {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+      }
+
+      .admin-sidebar {
+        position: relative;
+        width: 100%;
+        top: auto;
+        box-shadow: 0 20px 40px rgba(12, 16, 24, 0.12);
+        order: 2;
+        margin-top: 20px;
+      }
+
+      .admin-content {
+        order: 1;
+        padding: 24px;
+      }
+
+      .property-card-main {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .property-card img {
+        width: 100%;
+        height: 170px;
+      }
+
+      .property-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-panel">
+  <div class="admin-sidebar">
+    <h3 class="sidebar-title">Painel Administrativo</h3>
+    <a href="#" class="menu-item active" data-section="properties">
+      <i class="fas fa-home"></i> Gerenciar Imóveis
+    </a>
+    <a href="#" class="menu-item" data-section="customers">
+      <i class="fas fa-users"></i> Visualizar Clientes
+    </a>
+    <a href="#" class="menu-item" data-section="contracts">
+      <i class="fas fa-file-contract"></i> Gerenciar Contratos
+    </a>
+    <a href="#" class="menu-item" data-section="brokers">
+      <i class="fas fa-user-tie"></i> Gerenciar Corretores
+    </a>
+    
+    <button class="btn-primary logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+
+  <div class="admin-content">
+    
+    <div class="content-wrapper">
+    
+      <div class="admin-header">
+        <div>
+          <p class="eyebrow">Painel operacional</p>
+          <h1>Painel de Administrador</h1>
+        </div>
+        <button type="button" class="btn-secondary" onclick="refreshDashboard()">Sincronizar painel</button>
+      </div>
+
+      <div class="message" id="message"></div>
+
+      <div class="stats-grid">
+        <!-- Cards de estatísticas podem ser ativados no futuro -->
+      </div>
+
+      <div class="panel-section active" id="properties-section">
+        <div class="section-heading">
+          <h2>Gerenciar Imóveis</h2>
+          <p>Cadastre novos imóveis, acompanhe o catálogo e remova registros quando necessário.</p>
+        </div>
+        
+        <div class="form-section">
+          <h3 id="form-title">Adicionar Novo Imóvel</h3>
+          <input type="hidden" id="property-id">
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="title">Título</label>
+              <input type="text" id="title" placeholder="Ex: 18 Old Street Miami">
+            </div>
+            <div class="form-group">
+              <label for="price">Preço</label>
+              <input type="text" id="price" placeholder="Ex: $2.264.000">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="category">Categoria</label>
+              <input type="text" id="category" placeholder="Ex: Luxury Villa">
+            </div>
+            <div class="form-group">
+              <label for="type">Tipo de Filtro</label>
+              <select id="type">
+                <option value="adv">Apartamento</option>
+                <option value="str">Casa</option>
+                
+              </select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="bedrooms">Quartos</label>
+              <input type="number" id="bedrooms" value="4">
+            </div>
+            <div class="form-group">
+              <label for="bathrooms">Banheiros</label>
+              <input type="number" id="bathrooms" value="3">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="area">Área (ex: 225m2)</label>
+              <input type="text" id="area" placeholder="Ex: 225m2">
+            </div>
+            <div class="form-group">
+              <label for="floor">Andar</label>
+              <input type="text" id="floor" placeholder="Ex: 3">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="parking">Vagas de Garagem</label>
+              <input type="text" id="parking" placeholder="Ex: 6 spots">
+            </div>
+            <div class="form-group">
+              <label for="image">URL da Imagem</label>
+              <input type="text" id="image" placeholder="Ex: assets/images/property-01.jpg">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Descrição do Imóvel</label>
+            <textarea id="description" rows="3" placeholder="Resumo do imóvel para a página de detalhes" style="width: 100%; border-radius: 12px; border: 1px solid var(--border); padding: 12px 14px; background:#fafbff; font-size:0.95rem;"></textarea>
+          </div>
+          <button class="btn-primary" id="submit-btn" onclick="submitProperty()">Adicionar Imóvel</button>
+          <button class="btn-secondary" id="cancel-btn" onclick="cancelEdit()" style="display: none;">Cancelar</button>
+        </div>
+
+        <h3>Imóveis Cadastrados</h3>
+        <div id="properties-list" class="cards-grid"></div>
+      </div>
+
+      <div class="panel-section" id="customers-section">
+        <div class="section-heading">
+          <h2>Clientes Cadastrados</h2>
+          <p>Últimos cadastros e contatos armazenados</p>
+        </div>
+        <div class="table-responsive">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Data de Cadastro</th>
+              </tr>
+            </thead>
+            <tbody id="customers-list">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-section" id="contracts-section">
+        <div class="section-heading">
+          <h2>Contratos administrativos</h2>
+          <p>Registre contratos de venda ou aluguel sem impactar diretamente a página pública.</p>
+        </div>
+
+        <div class="contracts-grid">
+          <div class="form-section contract-form">
+            <h3>Contrato de Venda</h3>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-sale-number">Número do contrato</label>
+                <input type="text" id="contract-sale-number" placeholder="Ex: VEN-0041">
+              </div>
+              <div class="form-group">
+                <label for="contract-sale-client">Comprador</label>
+                <input type="text" id="contract-sale-client" placeholder="Nome do comprador">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-sale-property">Propriedade</label>
+                <input type="text" id="contract-sale-property" placeholder="Referência do imóvel">
+              </div>
+              <div class="form-group">
+                <label for="contract-sale-value">Valor da venda</label>
+                <input type="text" id="contract-sale-value" placeholder="Ex: $1.250.000">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-sale-closing">Data de fechamento</label>
+                <input type="date" id="contract-sale-closing">
+              </div>
+              <div class="form-group">
+                <label for="contract-sale-notes">Observações</label>
+                <input type="text" id="contract-sale-notes" placeholder="Ex: pagamento em parcelas">
+              </div>
+            </div>
+            <button class="btn-primary" onclick="addSaleContract()">Cadastrar contrato de venda</button>
+          </div>
+
+          <div class="form-section contract-form">
+            <h3>Contrato de Aluguel</h3>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-rent-number">Número do contrato</label>
+                <input type="text" id="contract-rent-number" placeholder="Ex: ALU-203">
+              </div>
+              <div class="form-group">
+                <label for="contract-rent-client">Inquilino</label>
+                <input type="text" id="contract-rent-client" placeholder="Nome do inquilino">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-rent-property">Propriedade</label>
+                <input type="text" id="contract-rent-property" placeholder="Referência do imóvel">
+              </div>
+              <div class="form-group">
+                <label for="contract-rent-rent-value">Valor mensal</label>
+                <input type="text" id="contract-rent-rent-value" placeholder="Ex: $4.200">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-rent-start">Data de início</label>
+                <input type="date" id="contract-rent-start">
+              </div>
+              <div class="form-group">
+                <label for="contract-rent-end">Data de término</label>
+                <input type="date" id="contract-rent-end">
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="contract-rent-deposit">Depósito</label>
+                <input type="text" id="contract-rent-deposit" placeholder="Ex: $8.400">
+              </div>
+              <div class="form-group">
+                <label for="contract-rent-notes">Observações</label>
+                <input type="text" id="contract-rent-notes" placeholder="Ex: multa rescisória">
+              </div>
+            </div>
+            <button class="btn-primary" onclick="addRentContract()">Cadastrar contrato de aluguel</button>
+          </div>
+        </div>
+
+        <div class="contracts-list">
+          <div>
+            <h3>Contratos de Venda</h3>
+            <div id="contracts-sale-list" class="cards-grid"></div>
+          </div>
+          <div>
+            <h3>Contratos de Aluguel</h3>
+            <div id="contracts-rent-list" class="cards-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section" id="brokers-section">
+        <div class="section-heading">
+          <h2>Gerenciar Corretores</h2>
+          <p>Cadastre novos corretores, acompanhe a equipe e remova registros quando necessário.</p>
+        </div>
+
+        <div class="form-section">
+          <h3>Adicionar Novo Corretor</h3>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="broker-name">Nome</label>
+              <input type="text" id="broker-name" placeholder="Ex: João Silva">
+            </div>
+            <div class="form-group">
+              <label for="broker-email">E-mail</label>
+              <input type="email" id="broker-email" placeholder="Ex: joao@atlasimoveis.com">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="broker-phone">Telefone</label>
+              <input type="text" id="broker-phone" placeholder="Ex: (11) 99999-9999">
+            </div>
+            <div class="form-group">
+              <label for="broker-specialty">Especialidade</label>
+              <input type="text" id="broker-specialty" placeholder="Ex: Vendas de Apartamentos">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="broker-password">Senha Inicial</label>
+            <input type="password" id="broker-password" placeholder="Senha para login (mínimo 4 caracteres)" required>
+            <small style="color: #666; font-size: 12px;">O corretor poderá alterar esta senha após o primeiro login</small>
+          </div>
+          <button class="btn-primary" onclick="addBroker()">Adicionar Corretor</button>
+        </div>
+
+        <h3>Corretores Cadastrados</h3>
+        <div id="brokers-list" class="cards-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  if (!localStorage.getItem('adminLoggedIn')) {
+    window.location.href = 'admin-login.html';
+  }
+
+  class PropertiesManager {
+    getAllProperties() {
+      const raw = JSON.parse(localStorage.getItem('properties') || '[]');
+      // Garante que todo imóvel tenha um status padrão
+      return raw.map(p => ({
+        status: 'disponivel',
+        ...p,
+        status: p.status || 'disponivel'
+      }));
+    }
+
+    addProperty(newProperty) {
+      const properties = this.getAllProperties();
+      const id = Math.max(...properties.map(p => p.id), 0) + 1;
+      const property = { id, status: 'disponivel', ...newProperty };
+      properties.push(property);
+      localStorage.setItem('properties', JSON.stringify(properties));
+      return property;
+    }
+
+    updateProperty(id, updatedProperty) {
+      const properties = this.getAllProperties();
+      const index = properties.findIndex(p => p.id === id);
+      if (index !== -1) {
+        properties[index] = { ...properties[index], ...updatedProperty };
+        localStorage.setItem('properties', JSON.stringify(properties));
+        return true;
+      }
+      return false;
+    }
+
+    deleteProperty(id) {
+      const properties = this.getAllProperties();
+      const filtered = properties.filter(p => p.id !== id);
+      localStorage.setItem('properties', JSON.stringify(filtered));
+      return true;
+    }
+  }
+
+  class ContractsManager {
+    constructor(key) {
+      this.key = key;
+    }
+
+    getAll() {
+      return JSON.parse(localStorage.getItem(this.key) || '[]');
+    }
+
+    save(list) {
+      localStorage.setItem(this.key, JSON.stringify(list));
+    }
+
+    add(entry) {
+      const current = this.getAll();
+      const nextId = current.length ? Math.max(...current.map(item => item.id)) + 1 : 1;
+      const newEntry = { id: nextId, ...entry };
+      current.push(newEntry);
+      this.save(current);
+      return newEntry;
+    }
+
+    remove(id) {
+      const filtered = this.getAll().filter(item => item.id !== id);
+      this.save(filtered);
+      return filtered;
+    }
+  }
+
+  class BrokersManager {
+    getAll() {
+      return JSON.parse(localStorage.getItem('brokers') || '[]');
+    }
+
+    save(list) {
+      localStorage.setItem('brokers', JSON.stringify(list));
+    }
+
+    add(entry) {
+      const current = this.getAll();
+      const nextId = current.length ? Math.max(...current.map(item => item.id)) + 1 : 1;
+      const newEntry = { id: nextId, ...entry };
+      current.push(newEntry);
+      this.save(current);
+      return newEntry;
+    }
+
+    remove(id) {
+      const filtered = this.getAll().filter(item => item.id !== id);
+      this.save(filtered);
+      return filtered;
+    }
+  }
+
+  const propertiesManager = new PropertiesManager();
+  const contractsManager = {
+    sale: new ContractsManager('contracts-sale'),
+    rent: new ContractsManager('contracts-rent')
+  };
+  const brokersManager = new BrokersManager();
+
+  const statsElements = {
+    properties: document.getElementById('stat-properties'),
+    customers: document.getElementById('stat-customers'),
+    lastActivity: document.getElementById('stat-last-activity'),
+    contracts: document.getElementById('stat-contracts')
+  };
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
+
+      item.classList.add('active');
+      const section = item.getAttribute('data-section') + '-section';
+      const target = document.getElementById(section);
+      if (target) target.classList.add('active');
+
+      if (item.getAttribute('data-section') === 'customers') {
+        loadCustomers();
+      }
+
+      if (item.getAttribute('data-section') === 'contracts') {
+        loadContracts();
+      }
+
+      if (item.getAttribute('data-section') === 'brokers') {
+        loadBrokers();
+      }
+    });
+  });
+
+  function getCustomers() {
+    return JSON.parse(localStorage.getItem('customers') || '[]');
+  }
+
+  function submitProperty() {
+    const id = document.getElementById('property-id').value;
+    const title = document.getElementById('title').value;
+    const price = document.getElementById('price').value;
+    const category = document.getElementById('category').value;
+    const type = document.getElementById('type').value;
+    const bedrooms = parseInt(document.getElementById('bedrooms').value);
+    const bathrooms = parseInt(document.getElementById('bathrooms').value);
+    const area = document.getElementById('area').value;
+    const floor = document.getElementById('floor').value;
+    const parking = document.getElementById('parking').value;
+    const image = document.getElementById('image').value;
+    const description = document.getElementById('description').value;
+
+    if (!title || !price || !category) {
+      showMessage('Por favor, preencha os campos obrigatórios', 'error');
+      return;
+    }
+
+    const updatedProperty = {
+      image,
+      category,
+      price,
+      title,
+      bedrooms,
+      bathrooms,
+      area,
+      floor,
+      parking,
+      type,
+      description
+    };
+
+    if (id) {
+      const success = propertiesManager.updateProperty(parseInt(id), updatedProperty);
+      if (success) {
+        showMessage('Imóvel atualizado com sucesso!', 'success');
+      } else {
+        showMessage('Erro ao atualizar imóvel', 'error');
+        return;
+      }
+    } else {
+      propertiesManager.addProperty(updatedProperty);
+      showMessage('Imóvel adicionado com sucesso!', 'success');
+    }
+
+    cancelEdit();
+    loadProperties();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function deleteProperty(id) {
+    if (!confirm('Tem certeza que deseja deletar este imóvel?')) return;
+
+    propertiesManager.deleteProperty(id);
+    showMessage('Imóvel deletado com sucesso!', 'success');
+    loadProperties();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function addSaleContract() {
+    const number = document.getElementById('contract-sale-number').value.trim();
+    const client = document.getElementById('contract-sale-client').value.trim();
+    const property = document.getElementById('contract-sale-property').value.trim();
+    const value = document.getElementById('contract-sale-value').value.trim();
+    const closingDate = document.getElementById('contract-sale-closing').value;
+    const notes = document.getElementById('contract-sale-notes').value.trim();
+
+    if (!number || !client || !property || !value) {
+      showMessage('Preencha os campos essenciais do contrato de venda.', 'error');
+      return;
+    }
+
+    contractsManager.sale.add({
+      number,
+      client,
+      property,
+      value,
+      closingDate,
+      notes
+    });
+
+    document.getElementById('contract-sale-number').value = '';
+    document.getElementById('contract-sale-client').value = '';
+    document.getElementById('contract-sale-property').value = '';
+    document.getElementById('contract-sale-value').value = '';
+    document.getElementById('contract-sale-closing').value = '';
+    document.getElementById('contract-sale-notes').value = '';
+
+    showMessage('Contrato de venda cadastrado com sucesso!', 'success');
+    loadContracts();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function addRentContract() {
+    const number = document.getElementById('contract-rent-number').value.trim();
+    const client = document.getElementById('contract-rent-client').value.trim();
+    const property = document.getElementById('contract-rent-property').value.trim();
+    const monthlyValue = document.getElementById('contract-rent-rent-value').value.trim();
+    const startDate = document.getElementById('contract-rent-start').value;
+    const endDate = document.getElementById('contract-rent-end').value;
+    const deposit = document.getElementById('contract-rent-deposit').value.trim();
+    const notes = document.getElementById('contract-rent-notes').value.trim();
+
+    if (!number || !client || !property || !monthlyValue || !startDate || !endDate) {
+      showMessage('Informe os dados completos do contrato de aluguel.', 'error');
+      return;
+    }
+
+    contractsManager.rent.add({
+      number,
+      client,
+      property,
+      monthlyValue,
+      startDate,
+      endDate,
+      deposit,
+      notes
+    });
+
+    document.getElementById('contract-rent-number').value = '';
+    document.getElementById('contract-rent-client').value = '';
+    document.getElementById('contract-rent-property').value = '';
+    document.getElementById('contract-rent-rent-value').value = '';
+    document.getElementById('contract-rent-start').value = '';
+    document.getElementById('contract-rent-end').value = '';
+    document.getElementById('contract-rent-deposit').value = '';
+    document.getElementById('contract-rent-notes').value = '';
+
+    showMessage('Contrato de aluguel cadastrado com sucesso!', 'success');
+    loadContracts();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function deleteContract(type, id) {
+    if (!confirm('Tem certeza que deseja deletar este contrato?')) return;
+    const manager = contractsManager[type];
+    if (!manager) return;
+
+    manager.remove(id);
+    showMessage('Contrato removido com sucesso!', 'success');
+    loadContracts();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function addBroker() {
+    const name = document.getElementById('broker-name').value.trim();
+    const email = document.getElementById('broker-email').value.trim();
+    const phone = document.getElementById('broker-phone').value.trim();
+    const specialty = document.getElementById('broker-specialty').value.trim();
+    const password = document.getElementById('broker-password').value.trim();
+
+    if (!name || !email) {
+      showMessage('Preencha os campos essenciais do corretor (Nome e E-mail).', 'error');
+      return;
+    }
+
+    if (!password || password.length < 4) {
+      showMessage('A senha deve ter no mínimo 4 caracteres.', 'error');
+      return;
+    }
+
+    // Verifica se o email já existe no sistema de usuários
+    const usuarios = JSON.parse(localStorage.getItem('sistema_usuarios') || '[]');
+    if (usuarios.find(u => u.email === email)) {
+      showMessage('Este e-mail já está cadastrado no sistema!', 'error');
+      return;
+    }
+
+    // Adiciona na lista de corretores (brokers)
+    brokersManager.add({
+      name,
+      email,
+      phone,
+      specialty
+    });
+
+    // Cria também um usuário no sistema_usuarios com perfil "corretor"
+    const novoUsuario = {
+      nome: name,
+      email: email,
+      senha: password,
+      perfil: "corretor",
+      telefone: phone,
+      especialidade: specialty,
+      dataCadastro: new Date().toLocaleDateString()
+    };
+
+    usuarios.push(novoUsuario);
+    localStorage.setItem('sistema_usuarios', JSON.stringify(usuarios));
+
+    // Limpa os campos
+    document.getElementById('broker-name').value = '';
+    document.getElementById('broker-email').value = '';
+    document.getElementById('broker-phone').value = '';
+    document.getElementById('broker-specialty').value = '';
+    document.getElementById('broker-password').value = '';
+
+    showMessage('Corretor adicionado com sucesso! Ele já pode fazer login com o e-mail e senha cadastrados.', 'success');
+    loadBrokers();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function deleteBroker(id) {
+    if (!confirm('Tem certeza que deseja deletar este corretor? Isso também removerá o acesso de login dele.')) return;
+
+    // Busca o corretor antes de remover para pegar o email
+    const brokers = brokersManager.getAll();
+    const broker = brokers.find(b => b.id === id);
+    
+    if (broker) {
+      // Remove também do sistema_usuarios
+      const usuarios = JSON.parse(localStorage.getItem('sistema_usuarios') || '[]');
+      const usuariosFiltrados = usuarios.filter(u => u.email !== broker.email);
+      localStorage.setItem('sistema_usuarios', JSON.stringify(usuariosFiltrados));
+    }
+
+    brokersManager.remove(id);
+    showMessage('Corretor removido com sucesso!', 'success');
+    loadBrokers();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  function loadBrokers() {
+    const brokers = brokersManager.getAll();
+    const list = document.getElementById('brokers-list');
+
+    if (brokers.length === 0) {
+      list.innerHTML = '<p class="empty-state">Nenhum corretor cadastrado</p>';
+      return;
+    }
+
+    list.innerHTML = brokers.map(broker => `
+      <div class="property-card">
+        <div class="property-info">
+          <h5>${broker.name || 'Corretor sem nome'}</h5>
+          <p class="contract-meta">Email: ${broker.email || '—'}</p>
+          <p class="contract-meta">Telefone: ${broker.phone || '—'}</p>
+          <p class="contract-meta">Especialidade: ${broker.specialty || '—'}</p>
+        </div>
+        <div class="property-card-footer">
+          <button class="btn-delete" onclick="deleteBroker(${broker.id})">Remover</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function formatDate(value) {
+    if (!value) return '—';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString('pt-BR');
+  }
+
+  function updateStats() {
+    if (!statsElements.properties) return;
+
+    const properties = propertiesManager.getAllProperties();
+    const customers = getCustomers();
+    const sale = contractsManager.sale.getAll();
+    const rent = contractsManager.rent.getAll();
+    const now = new Date();
+
+    statsElements.properties.textContent = properties.length;
+    statsElements.customers.textContent = customers.length;
+    statsElements.lastActivity.textContent = now.toLocaleString('pt-BR', {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
+
+    if (statsElements.contracts) {
+      statsElements.contracts.textContent = sale.length + rent.length;
+    }
+  }
+
+  function loadProperties() {
+    const properties = propertiesManager.getAllProperties();
+    const list = document.getElementById('properties-list');
+
+    if (properties.length === 0) {
+      list.innerHTML = '<p class="empty-state">Nenhum imóvel cadastrado</p>';
+      updateStats();
+      return;
+    }
+
+    list.innerHTML = properties.map(prop => {
+      const imageUrl = prop.image || 'assets/images/property-01.jpg';
+      const category = prop.category || 'Sem categoria';
+      const priceText = prop.price || '—';
+      const typeLabel = prop.type || '—';
+      const bedrooms = prop.bedrooms ?? '—';
+      const bathrooms = prop.bathrooms ?? '—';
+      const area = prop.area || '—';
+      const floor = prop.floor || '—';
+      const parking = prop.parking || '—';
+      const description = prop.description || '';
+
+      return `
+        <div class="property-card">
+          <div class="property-card-main">
+            <img src="${imageUrl}" alt="${prop.title || 'Imóvel'}">
+            <div class="property-info">
+              <span class="property-category">${category}</span>
+              <h5>${prop.title || 'Imóvel sem título'}</h5>
+              <p class="price">${priceText}</p>
+              <p>${typeLabel}</p>
+              ${description ? `<p class="property-meta">${description.substring(0, 90)}${description.length > 90 ? '...' : ''}</p>` : ''}
+            </div>
+          </div>
+          <div class="property-card-footer">
+            <div>
+              <p class="property-meta">Quartos ${bedrooms} • Banheiros ${bathrooms}</p>
+              <p class="property-meta">Área ${area} • Andar ${floor} • Vagas ${parking}</p>
+            </div>
+            <button class="btn-edit" onclick="editProperty(${prop.id})">Editar</button>
+            <button class="btn-delete" onclick="deleteProperty(${prop.id})">Deletar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    updateStats();
+  }
+
+  function loadCustomers() {
+    const customers = getCustomers();
+    const list = document.getElementById('customers-list');
+
+    if (customers.length === 0) {
+      list.innerHTML = '<tr><td colspan="2">Nenhum cliente cadastrado</td></tr>';
+      updateStats();
+      return;
+    }
+
+    list.innerHTML = customers.map(customer => `
+      <tr>
+        <td>${customer.email}</td>
+        <td>${new Date(customer.date).toLocaleString('pt-BR')}</td>
+      </tr>
+    `).join('');
+
+    updateStats();
+  }
+
+  function loadContracts() {
+    const saleContracts = contractsManager.sale.getAll();
+    const rentContracts = contractsManager.rent.getAll();
+    const saleList = document.getElementById('contracts-sale-list');
+    const rentList = document.getElementById('contracts-rent-list');
+
+    if (saleContracts.length === 0) {
+      saleList.innerHTML = '<p class="empty-state">Nenhum contrato de venda cadastrado</p>';
+    } else {
+      saleList.innerHTML = saleContracts.reverse().map(contract => `
+        <div class="contract-card">
+          <span class="contract-number">${contract.number || `VEN-${contract.id}`}</span>
+          <strong>${contract.property || 'Imóvel não identificado'}</strong>
+          <p class="contract-meta">Comprador: ${contract.client || '—'}</p>
+          <p class="contract-meta">Valor: ${contract.value || '—'}</p>
+          <p class="contract-meta">Fechamento: ${formatDate(contract.closingDate)}</p>
+          ${contract.notes ? `<p class="contract-meta">${contract.notes}</p>` : ''}
+          <button class="btn-delete" onclick="deleteContract('sale', ${contract.id})">Remover</button>
+        </div>
+      `).join('');
+    }
+
+    if (rentContracts.length === 0) {
+      rentList.innerHTML = '<p class="empty-state">Nenhum contrato de aluguel cadastrado</p>';
+    } else {
+      rentList.innerHTML = rentContracts.reverse().map(contract => `
+        <div class="contract-card">
+          <span class="contract-number">${contract.number || `ALU-${contract.id}`}</span>
+          <strong>${contract.property || 'Imóvel não identificado'}</strong>
+          <p class="contract-meta">Inquilino: ${contract.client || '—'}</p>
+          <p class="contract-meta">Valor mensal: ${contract.monthlyValue || '—'}</p>
+          <p class="contract-meta">Período: ${formatDate(contract.startDate)} – ${formatDate(contract.endDate)}</p>
+          <p class="contract-meta">Depósito: ${contract.deposit || '—'}</p>
+          ${contract.notes ? `<p class="contract-meta">${contract.notes}</p>` : ''}
+          <button class="btn-delete" onclick="deleteContract('rent', ${contract.id})">Remover</button>
+        </div>
+      `).join('');
+    }
+
+    updateStats();
+  }
+
+  function refreshDashboard() {
+    loadProperties();
+    loadCustomers();
+    loadContracts();
+  }
+
+  window.addEventListener('storage', () => {
+    refreshDashboard();
+  });
+
+  function showMessage(text, type) {
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = text;
+    messageEl.className = 'message ' + type;
+    setTimeout(() => {
+      messageEl.className = 'message';
+    }, 3000);
+  }
+
+  function editProperty(id) {
+    const properties = propertiesManager.getAllProperties();
+    const property = properties.find(p => p.id === id);
+    if (!property) return;
+
+    // Populate form fields
+    document.getElementById('property-id').value = property.id;
+    document.getElementById('title').value = property.title || '';
+    document.getElementById('price').value = property.price || '';
+    document.getElementById('category').value = property.category || '';
+    document.getElementById('type').value = property.type || 'adv';
+    document.getElementById('bedrooms').value = property.bedrooms || 4;
+    document.getElementById('bathrooms').value = property.bathrooms || 3;
+    document.getElementById('area').value = property.area || '';
+    document.getElementById('floor').value = property.floor || '';
+    document.getElementById('parking').value = property.parking || '';
+    document.getElementById('image').value = property.image || '';
+    document.getElementById('description').value = property.description || '';
+
+    // Update UI
+    document.getElementById('form-title').textContent = 'Editar Imóvel';
+    document.getElementById('submit-btn').textContent = 'Editar Imóvel';
+    document.getElementById('cancel-btn').style.display = 'inline-block';
+  }
+
+  function cancelEdit() {
+    // Clear form
+    document.getElementById('property-id').value = '';
+    document.querySelectorAll('#properties-section .form-section input[type="text"], #properties-section .form-section input[type="number"]').forEach(input => input.value = '');
+    document.getElementById('bedrooms').value = '4';
+    document.getElementById('bathrooms').value = '3';
+    document.getElementById('type').value = 'adv';
+    document.getElementById('description').value = '';
+
+    // Reset UI
+    document.getElementById('form-title').textContent = 'Adicionar Novo Imóvel';
+    document.getElementById('submit-btn').textContent = 'Adicionar Imóvel';
+    document.getElementById('cancel-btn').style.display = 'none';
+  }
+
+  function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    window.location.href = 'admin-login.html';
+  }
+
+  refreshDashboard();
+</script>
+
+</body>
+</html>
